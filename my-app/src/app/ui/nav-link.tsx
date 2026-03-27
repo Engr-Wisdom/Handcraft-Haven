@@ -19,7 +19,7 @@ const NavLink = ({ sideBar, setSideBar }: NavLinkProps) => {
       }
 
       document.body.addEventListener("click", handleClick)
-      
+
       return () => {
         document.body.removeEventListener("click", handleClick)
       }
@@ -28,7 +28,7 @@ const NavLink = ({ sideBar, setSideBar }: NavLinkProps) => {
   const links = [
     { name: "Home", href: "/", },
     { name: "Products", href: "/products" },
-    { name: "About", href: "/about" },
+    { name: "About", href: "/about" },  
     { name: "Contact", href: "/contact" }
   ]
 
