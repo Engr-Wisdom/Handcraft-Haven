@@ -38,7 +38,7 @@ const Account = () => {
             <div className={`flex items-center gap-5 justify-end max-sm:bg-white max-sm:flex-col max-sm:fixed right-0 top-12 
             max-sm:rounded max-sm:gap-0 max-sm:p-1 ${account ? "opacity-100 scale-100" : "max-sm:opacity-0 max-sm:scale-95"} transition-all duration-300`}>
 
-                <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2
+                <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
                 max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6' onClick={() => {
                     router.push("./sign-up")
                     setAccount(false);

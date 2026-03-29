@@ -38,8 +38,7 @@ const NavLink = ({ sideBar, setSideBar }: NavLinkProps) => {
     ${!sideBar ? "w-0 max-lg:overflow-hidden" : "w-60 max-lg:pl-6 max-lg:pt-5"}`} ref={navRef}>
       <button className='font-bold text-red-700 text-xl lg:hidden' onClick={() => setSideBar(false)}>X</button>
       {links.map((link, index) => (
-        <Link key={index} href={link.href} className='active:max-lg:bg-gray-300 max-lg:w-full max-lg:p-2 
-        max-lg:rounded' onClick={() => setSideBar(false)}>
+        <Link key={index} href={link.href} className='max-lg:w-full max-lg:p-2 max-lg:rounded' onClick={() => setSideBar(false)}>
           {link.name}
         </Link>
       ))}
