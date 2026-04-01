@@ -24,7 +24,7 @@ const Logo = ({ setSideBar }: LogoProps) => {
             strokeLinejoin="round"
             d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"
           />
-      </svg>
+        </svg>
       </button>
       <Image src="/images/logo.png" alt='handcraft haven logo' width={40} height={40} />
       <h1 className='text-md font-bold'>Haven</h1>

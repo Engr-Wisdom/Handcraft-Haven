@@ -1,11 +1,3 @@
-// export type Product = {
-//   id: string,
-//   name: string,
-//   description: string,
-//   price: number,
-//   image: string,
-//   category: string
-// }
 export const products = [
   {
     id: "p1",
@@ -13,7 +5,9 @@ export const products = [
     description: "Handcrafted ceramic mug with a deep blue glaze finish.",
     price: 24,
     image: "/images/products/mug.jpg",
-    category: "ceramics"
+    category: "ceramics",
+    seller: "Clay & Co.",
+    rating: 3
   },
   {
     id: "p2",
@@ -21,7 +15,9 @@ export const products = [
     description: "Decorative handwoven textile piece for wall display.",
     price: 58,
     image: "/images/products/wall-hanging.jpg",
-    category: "textiles"
+    category: "textiles",
+    seller: "Thread & Loom",
+    rating: 4.7
   },
   {
     id: "p3",
@@ -29,7 +25,9 @@ export const products = [
     description: "Set of handcrafted iron hooks mounted on reclaimed wood.",
     price: 42,
     image: "/images/products/hooks.jpg",
-    category: "wood"
+    category: "wood",
+    seller: "Forge & Grain",
+    rating: 4.1
   },
   {
     id: "p4",
@@ -37,7 +35,9 @@ export const products = [
     description: "Solid wood cutting board with smooth handcrafted finish.",
     price: 36,
     image: "/images/products/cutting-board.jpg",
-    category: "kitchen"
+    category: "kitchen",
+    seller: "Timber Kitchen Co.",
+    rating: 4.1
   },
   {
     id: "p5",
@@ -45,7 +45,9 @@ export const products = [
     description: "Hand-stitched leather journal with embossed tree design.",
     price: 49,
     image: "/images/products/journal.jpg",
-    category: "leather"
+    category: "leather",
+    seller: "Hide & Bind",
+    rating: 4.6
   },
   {
     id: "p6",
@@ -53,7 +55,9 @@ export const products = [
     description: "Handmade wooden jewelry box with soft interior lining.",
     price: 39,
     image: "/images/products/jewelry-box.jpg",
-    category: "decor"
+    category: "decor",
+    seller: "Craft Haven",
+    rating: 4.4
   },
   {
     id: "p7",
@@ -61,7 +65,9 @@ export const products = [
     description: "Lightweight handcrafted earrings with turquoise accents.",
     price: 22,
     image: "/images/products/earrings.jpg",
-    category: "jewelry"
+    category: "jewelry",
+    seller: "Stone & Wire Studio",
+    rating: 4.2
   },
   {
     id: "p8",
@@ -69,7 +75,9 @@ export const products = [
     description: "Unique sculpted wooden stool suitable for indoor or garden use.",
     price: 95,
     image: "/images/products/stool.jpg",
-    category: "furniture"
+    category: "furniture",
+    seller: "Root & Branch",
+    rating: 4.9
   },
   {
     id: "p9",
@@ -77,7 +85,9 @@ export const products = [
     description: "Pair of rustic handcrafted stoneware bowls.",
     price: 33,
     image: "/images/products/bowls.jpg",
-    category: "ceramics"
+    category: "ceramics",
+    seller: "Clay & Co.",
+    rating: 4.5
   },
   {
     id: "p10",
@@ -85,6 +95,8 @@ export const products = [
     description: "Artisan necklace featuring turquoise beads and hand-woven pattern.",
     price: 44,
     image: "/images/products/necklace.jpg",
-    category: "jewelry"
+    category: "jewelry",
+    seller: "Stone & Wire Studio",
+    rating: 4.0
   }
 ];
