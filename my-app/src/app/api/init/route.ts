@@ -1,29 +1,47 @@
 import { sql } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    // Products
     await sql`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(150) NOT NULL,
-        description TEXT NOT NULL,
-        price NUMERIC(10,2) NOT NULL,
-        image VARCHAR(255) NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        is_popular BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT NOW()
+        price NUMERIC,
+        is_popular BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        image VARCHAR(255),
+        name VARCHAR(150),
+        description TEXT,
+        category VARCHAR(100)
       );
     `;
 
-    return NextResponse.json({
-      message: "Products table created successfully",
-    });
+    await sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS products_name_unique_idx
+      ON products (name);
+    `;
+//Users
+    await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL,
+        password TEXT NOT NULL,
+        gender VARCHAR(20),
+        phone VARCHAR(20),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    await sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique_idx
+      ON users (email);
+    `;
+
+    return Response.json({ message: "Database ready (products + users)" });
   } catch (error) {
-    console.error("Error creating products table:", error);
-    return NextResponse.json(
-      { error: "Failed to create products table" },
-      { status: 500 }
-    );
+    console.error(error);
+    return Response.json({ error: "Init failed" }, { status: 500 });
   }
 }

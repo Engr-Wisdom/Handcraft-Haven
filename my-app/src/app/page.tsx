@@ -3,7 +3,7 @@
 import React from 'react'
 import Image from "next/image"
 import { useRouter } from 'next/navigation'
-import { products } from "@/data/cards"
+import { products } from "@/data/products"
 import Card from "@/app/ui/card"
 
 const Home = () => {
