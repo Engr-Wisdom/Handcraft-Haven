@@ -26,7 +26,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* <Card products={products} /> */}
+      <Card products={products} />
     </div>
   )
 }

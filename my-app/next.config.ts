@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
+const path = require('path')
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  turbopack: {
+    root: __dirname,  // Forces Next.js to use THIS folder as root
+  },
+}
 
-export default nextConfig;
+module.exports = nextConfig

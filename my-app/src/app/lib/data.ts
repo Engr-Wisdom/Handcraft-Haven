@@ -37,7 +37,7 @@ export async function getProduct(id: number) {
 
         return product;
     } catch (err) {
-        console.error('Database Error:', err);
+        console.error('Database Error:', err); 
         throw new Error(`Failed to fetch c. ${id} object`);
     }
 }
