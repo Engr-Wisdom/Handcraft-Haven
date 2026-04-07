@@ -21,7 +21,7 @@ const Home = () => {
         </div>
 
         <div className='w-full'>
-          <Image src="/images/hero.jpg" alt='Hero image' width={500} height={500} draggable="false" className='w-full h-130 max-lg:h-100
+          <Image src='/images/hero.jpg' alt='Hero image' width={500} height={500} draggable='false' className='w-full h-130 max-lg:h-100
           max-sm:h-full rounded-2xl' />
         </div>
       </div>
