@@ -9,9 +9,9 @@ import Account from '@/app/ui/account'
 
 const Navbar = () => {
   const [sideBar, setSideBar] = useState(false)
-  
+
   return (
-    <div className='bg-amber-800 p-4 sm:px-10 flex items-center justify-between'>
+    <div className='bg-amber-800 p-4 sm:px-10 flex items-center justify-between z-[999]'>
       <div className='flex gap-5'>
         <Logo setSideBar={setSideBar} />
         <Search />

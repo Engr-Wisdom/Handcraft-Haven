@@ -1,9 +1,9 @@
 import React from 'react'
 import Image from "next/image"
-import { Product, Products } from '../lib/definitions'
+import { Product } from '../lib/definitions'
 
 
-const Card = ({ products }: Products) => {
+const Card = ({ products }: { products: Array<Product> }) => {
     return (
         <div className='pt-10 sm:pt-20'>
             <p className='bg-amber-700 w-fit px-4 p-2 rounded-full text-xs sm:text-sm text-white font-semibold mb-5'>Most Popular</p>

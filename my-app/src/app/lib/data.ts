@@ -1,11 +1,18 @@
 import { promises as fs } from 'fs';
 import { products } from '@/data/cards';
 import postgres from 'postgres';
-import { Product } from './definitions';
+import { Product, Store } from './definitions';
 const sql = postgres(process.env.DATABASE_URL_DATABASE_URL!, { ssl: 'require' });
+import { siteConfig } from '../constants/site';
+import { off } from 'process';
 
+const BASE_PRODUCT_SQL = sql`SELECT p.*, c.name AS category, s.name AS store, p.seo_url AS url, s.seo_url AS store_url FROM products AS p
+        JOIN categories as c
+        ON p.category_id = c.id
+        JOIN stores as s
+        ON p.store_id = s.id`;
 
-
+const { page_pagination } = siteConfig;
 
 export async function getIdProduct(url: string) {
     try {
@@ -16,21 +23,81 @@ export async function getIdProduct(url: string) {
         throw new Error(`Failed to fetch URL ${url} PRODUCT`);
     }
 }
+export async function getNumberPages(type: string = '', query: string = '') {
+
+    try {
+        switch (type) {
+
+            case '':  ///number of page for all the products
+                const data = await sql`SELECT COUNT(*) AS data FROM products`;
+                return Math.ceil(Number(data[0].data) / page_pagination);
+
+                break;
+            case 'category':
+                const cData = await sql`SELECT COUNT(*) AS data, c.name AS category FROM products as p
+                JOIN categories as c
+                ON c.id = p.category_id
+                WHERE c.name = ${query}
+                GROUP BY c.name
+                `;
+                return Math.ceil(Number(cData[0].data) / page_pagination);
+
+                break;
+
+
+        }
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error(`Failed to fetxh ${type} pagination`);
+
+    }
+
+    return 0;
+}
+
+
+
+export async function getProductsByCategory(category: string, currentPage: number) {
+    const offset = (currentPage - 1) * page_pagination;
+    try {
+        const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
+         WHERE c.name = ${category}
+         LIMIT ${page_pagination} OFFSET ${offset}
+        `;
+
+        let productsPromises = data.map(async (product) => {
+            const rating = await sql`SELECT AVG(rating) AS rating, COUNT(rating) as n_ratings FROM ratings WHERE product_id = ${product.id}`;
+            return {
+                ...product, rating: Math.round(rating[0].rating * 100) / 100,
+                n_ratings: rating[0].n_ratings
+            }
+        });
+
+        let products = await Promise.all(productsPromises);
+
+        return products;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch c. ${category} products`);
+    }
+}
+
+
+
+
+
+
 
 export async function getProduct(id: number) {
     try {
-        const data = await sql<Product[]>`SELECT p.*, c.name as category, s.name as store FROM products AS p
-        JOIN categories as c
-        ON p.category_id = c.id
-        JOIN stores as s
-        ON p.store_id = s.id
+        const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
          WHERE p.id = ${id}
         `;
 
         const product = data[0];
         if (product !== undefined) {
             const rating = await sql`SELECT AVG(rating) AS rating, COUNT(rating) as n_ratings FROM ratings WHERE product_id = ${id}`;
-            product.rating = rating[0].rating;
+            product.rating = Math.round(rating[0].rating * 100) / 100;
             product.n_ratings = rating[0].n_ratings;
 
         }
@@ -42,15 +109,66 @@ export async function getProduct(id: number) {
         throw new Error(`Failed to fetch c. ${id} object`);
     }
 }
+export async function getProductByUrl(url: string) {
+    try {
+        const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
+         WHERE p.seo_url = ${url}
+        `;
+        const product = data[0];
+        if (product !== undefined) {
+            const rating = await sql`SELECT AVG(rating) AS rating, COUNT(rating) as n_ratings FROM ratings WHERE product_id = ${product.id}`;
+            product.rating = Math.round(rating[0].rating * 100) / 100;
+            product.n_ratings = rating[0].n_ratings;
 
-export async function getDummyProduct(id: string) {
-    let data = await getProducts();
-    let choosen = await data.filter(p => p.id == id)[0];
-    return choosen;
+        }
 
+
+        return product;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch c. ${url} object`);
+    }
 }
 
 
-async function getProducts() {
-    return products;
+
+export async function getProducts(currentPage: number) {
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    const offset = (currentPage - 1) * page_pagination
+    try {
+        const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
+        ORDER BY p.id DESC
+        LIMIT ${page_pagination} OFFSET ${offset}
+        `;
+
+        let productsPromises = data.map(async (product) => {
+            const rating = await sql`SELECT AVG(rating) AS rating, COUNT(rating) as n_ratings FROM ratings WHERE product_id = ${product.id}`;
+            return {
+                ...product, rating: Math.round(rating[0].rating * 100) / 100,
+                n_ratings: rating[0].n_ratings
+            }
+        });
+
+        let products = await Promise.all(productsPromises);
+
+        return products;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch all products`);
+    }
+}
+export async function getStores(currentPage: number) {
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    const offset = (currentPage - 1) * page_pagination
+    try {
+        const stores = await sql<Store[]>`SELECT * FROM stores
+        LIMIT ${page_pagination} OFFSET ${offset}
+        `;
+        return stores;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch all stores`);
+    }
 }
