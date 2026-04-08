@@ -1,5 +1,6 @@
-export default function Rating({ rating, n_ratings }: { rating: number; n_ratings: number }) {
-    let starsN = Math.round(rating);
+import { Product } from "@/app/lib/definitions";
+export default function Rating({ product }: { product: Product }) {
+    let starsN = Math.round(product.rating);
     let stars = "";
     for (let i = 0; i < starsN; i++) {
         stars += "❤️"
@@ -12,7 +13,7 @@ export default function Rating({ rating, n_ratings }: { rating: number; n_rating
     }
     return <>
         <span>{stars}</span>
-        <span className="ml-1 text-sm text-blue-600">({n_ratings})</span>
+        <span className="ml-1 text-sm text-blue-600">({product.n_ratings})</span>
     </>
 
 }

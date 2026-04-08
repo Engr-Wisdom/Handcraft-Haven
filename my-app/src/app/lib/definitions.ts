@@ -8,4 +8,13 @@ export type Product = {
     store: string;
     rating: number;
     n_ratings: number;
+    url: string;
+    store_url: string;
+};
+export type Store = {
+    id: string;
+    name: string;
+    bio: string;
+    image: string;
+    seo_url: string;
 };
