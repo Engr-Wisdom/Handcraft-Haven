@@ -1,8 +1,13 @@
 import React from 'react'
 import Image from "next/image"
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: 'Contact US',
+  description: 'Have a question about our handmade products? Contact the Handcraft Haven team today. We would love to hear from you and help you find the perfect gift.'
+}
 
 const Contact = () => {
-  
+
   return (
     <div className='bg-gray-200 text-gray-900 p-4 sm:px-10 flex flex-col gap-10 items-center py-10'>
       <div className='text-center'>

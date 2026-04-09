@@ -2,7 +2,11 @@ import React from 'react'
 import { getProducts, getNumberPages } from '../lib/data'
 import ProductTable from '../ui/products/products-table';
 import Pagination from '../ui/pagination';
-import { LoadingCrafting } from '../ui/loadings';
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: 'Products',
+  description: 'Browse our full catalog of unique, handmade treasures crafted by talented artisans.'
+}
 
 export default async function Page(props: {
   searchParams?: Promise<{

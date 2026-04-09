@@ -11,24 +11,24 @@ interface NavLinkProps {
 const NavLink = ({ sideBar, setSideBar }: NavLinkProps) => {
   const navRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-      const handleClick = (event: MouseEvent) => {
-        if (navRef.current && !navRef.current.contains(event.target as Node)) {
-          setSideBar(false)
-        }
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setSideBar(false)
       }
+    }
 
-      document.body.addEventListener("click", handleClick)
+    document.body.addEventListener("click", handleClick)
 
-      return () => {
-        document.body.removeEventListener("click", handleClick)
-      }
+    return () => {
+      document.body.removeEventListener("click", handleClick)
+    }
   }, [])
 
   const links = [
     { name: "Home", href: "/", },
     { name: "Products", href: "/products" },
-    { name: "About", href: "/about" },  
+    { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" }
   ]
 

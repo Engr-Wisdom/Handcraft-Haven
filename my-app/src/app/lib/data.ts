@@ -1,11 +1,13 @@
+
 import { promises as fs } from 'fs';
 import { products } from '@/data/cards';
 import postgres from 'postgres';
 import { Product, Store, Review } from './definitions';
-const sql = postgres(process.env.DATABASE_URL_DATABASE_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 import { siteConfig } from '../constants/site';
 import { off } from 'process';
 import { formatFloat } from './utils';
+import { cache } from 'react';
 
 
 const BASE_PRODUCT_SQL = sql`SELECT p.*, c.name AS category, s.name AS store, p.seo_url AS url, s.seo_url AS store_url FROM products AS p
@@ -125,7 +127,7 @@ export async function getProduct(id: number) {
         throw new Error(`Failed to fetch c. ${id} object`);
     }
 }
-export async function getProductByUrl(url: string) {
+export const getProductByUrl = cache(async (url: string) => {
     try {
         const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
          WHERE p.seo_url = ${url}
@@ -144,7 +146,8 @@ export async function getProductByUrl(url: string) {
         console.error('Database Error:', err);
         throw new Error(`Failed to fetch c. ${url} object`);
     }
-}
+});
+
 
 
 
@@ -216,9 +219,7 @@ export async function getStores(currentPage: number) {
         throw new Error(`Failed to fetch all stores`);
     }
 }
-export async function getStoreByUrl(url: string) {
-
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+export const getStoreByUrl = cache(async (url: string) => {
     try {
         const stores = await sql<Store[]>`${STORE_BASE_QUERY}
         WHERE s.seo_url = ${url}
@@ -229,7 +230,7 @@ export async function getStoreByUrl(url: string) {
         console.error('Database Error:', err);
         throw new Error(`Failed to fetch store BY URL`);
     }
-}
+});
 
 export async function getLastWrittenReviewByStore(store: Store, limit: number = 3) {
     // await new Promise((resolve) => setTimeout(resolve, 3000));

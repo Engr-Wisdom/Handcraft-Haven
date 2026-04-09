@@ -5,6 +5,27 @@ import { Product, Review, Store } from "@/app/lib/definitions";
 import { StorePageCard } from "@/app/ui/stores/store-card";
 import ProductTable from "@/app/ui/products/products-table";
 import Pagination from "@/app/ui/pagination";
+import { Metadata } from "next";
+type Props = {
+    params: Promise<{ url: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const slug = (await params).url
+    const store = await getStoreByUrl(slug);
+    if (!store) {
+        return { title: "Store Not Found" }
+    }
+
+    return {
+        title: store.name,
+        description: `Explore unique products from ${store.name}.`,
+    }
+}
+
+
+
+
 export default async function Page(props: {
     params: Promise<{ url: string }>, searchParams?: Promise<{
         page?: string;
