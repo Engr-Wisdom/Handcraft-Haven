@@ -17,5 +17,13 @@ export type Store = {
     bio: string;
     image: string;
     seo_url: string;
-    avg_rating: number
+    avg_rating: number;
+};
+export type Review = {
+    id: string;
+    user_name: string;
+    rating: number;
+    product_id: number;
+    date: string;
+    message: string;
 };

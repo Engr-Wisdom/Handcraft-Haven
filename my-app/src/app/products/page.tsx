@@ -1,7 +1,7 @@
 import React from 'react'
 import { getProducts, getNumberPages } from '../lib/data'
 import ProductTable from '../ui/products/products-table';
-import Pagination from '../ui/products/pagination';
+import Pagination from '../ui/pagination';
 import { LoadingCrafting } from '../ui/loadings';
 
 export default async function Page(props: {

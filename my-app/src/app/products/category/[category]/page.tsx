@@ -1,6 +1,6 @@
 import { getProductsByCategory, getNumberPages } from "@/app/lib/data";
 import ProductTable from "@/app/ui/products/products-table";
-import Pagination from "@/app/ui/products/pagination";
+import Pagination from "@/app/ui/pagination";
 import { capitalize } from "@/app/lib/utils";
 export default async function Page(props: {
     params: Promise<{ category: string }>, searchParams?: Promise<{

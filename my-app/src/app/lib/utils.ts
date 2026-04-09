@@ -39,3 +39,17 @@ export function capitalize(word: string) {
 export function formatFloat(n: number) {
     return Math.round(n * 100) / 100;
 }
+
+export function numberToHearts(number: number) {
+    let stars = "";
+    for (let i = 0; i < number; i++) {
+        stars += "❤️"
+    }
+    if (number < 5) {
+        let lefting = 5 - number;
+        for (let i = 0; i < lefting; i++) {
+            stars += "🩶"
+        }
+    }
+    return stars;
+}

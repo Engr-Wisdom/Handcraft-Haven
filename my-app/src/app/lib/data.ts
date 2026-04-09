@@ -1,11 +1,12 @@
 import { promises as fs } from 'fs';
 import { products } from '@/data/cards';
 import postgres from 'postgres';
-import { Product, Store } from './definitions';
+import { Product, Store, Review } from './definitions';
 const sql = postgres(process.env.DATABASE_URL_DATABASE_URL!, { ssl: 'require' });
 import { siteConfig } from '../constants/site';
 import { off } from 'process';
 import { formatFloat } from './utils';
+
 
 const BASE_PRODUCT_SQL = sql`SELECT p.*, c.name AS category, s.name AS store, p.seo_url AS url, s.seo_url AS store_url FROM products AS p
         JOIN categories as c
@@ -17,7 +18,13 @@ JOIN products as p
 ON r.product_id = p.id
 JOIN stores as s
 ON s.id = p.store_id
-GROUP BY s.id`;
+`;
+const REVIEW_BASE_QUERY = sql`SELECT CONCAT(u.first_name,' ', u.last_name) AS user_name, p.store_id, r.* FROM ratings AS r
+JOIN products AS p
+ON p.id = r.product_id
+JOIN users AS u
+on r.user_id = u.id
+`;
 
 const { page_pagination } = siteConfig;
 
@@ -48,6 +55,13 @@ export async function getNumberPages(type: string = '', query: string = '') {
                 GROUP BY c.name
                 `;
                 return Math.ceil(Number(cData[0].data) / page_pagination);
+
+                break;
+            case 'store':
+                const sData = await sql`SELECT COUNT(*) AS data FROM products as p
+                WHERE p.store_id = ${query}
+                `;
+                return Math.ceil(Number(sData[0].data) / page_pagination);
 
                 break;
 
@@ -88,11 +102,6 @@ export async function getProductsByCategory(category: string, currentPage: numbe
         throw new Error(`Failed to fetch c. ${category} products`);
     }
 }
-
-
-
-
-
 
 
 export async function getProduct(id: number) {
@@ -165,12 +174,40 @@ export async function getProducts(currentPage: number) {
         throw new Error(`Failed to fetch all products`);
     }
 }
+export async function getProductsByStore(currentPage: number, store: Store) {
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    const offset = (currentPage - 1) * page_pagination
+    try {
+        const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
+        WHERE store_id = ${store.id}
+        ORDER BY p.id DESC
+        LIMIT ${page_pagination} OFFSET ${offset}
+        `;
+
+        let productsPromises = data.map(async (product) => {
+            const rating = await sql`SELECT AVG(rating) AS rating, COUNT(rating) as n_ratings FROM ratings WHERE product_id = ${product.id}`;
+            return {
+                ...product, rating: Math.round(rating[0].rating * 100) / 100,
+                n_ratings: rating[0].n_ratings
+            }
+        });
+
+        let products = await Promise.all(productsPromises);
+
+        return products;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch all products`);
+    }
+}
 export async function getStores(currentPage: number) {
 
     // await new Promise((resolve) => setTimeout(resolve, 3000));
     const offset = (currentPage - 1) * page_pagination
     try {
         const stores = await sql<Store[]>`${STORE_BASE_QUERY}
+        GROUP BY s.id
         LIMIT ${page_pagination} OFFSET ${offset}
         `;
         return stores;
@@ -178,4 +215,34 @@ export async function getStores(currentPage: number) {
         console.error('Database Error:', err);
         throw new Error(`Failed to fetch all stores`);
     }
+}
+export async function getStoreByUrl(url: string) {
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+        const stores = await sql<Store[]>`${STORE_BASE_QUERY}
+        WHERE s.seo_url = ${url}
+        GROUP BY s.id
+        `;
+        return stores[0];
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch store BY URL`);
+    }
+}
+
+export async function getLastWrittenReviewByStore(store: Store, limit: number = 3) {
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+        const reviews = await sql<Review[]>`${REVIEW_BASE_QUERY}
+        WHERE message IS NOT NULL AND store_id = ${store.id}
+        ORDER BY r.id DESC 
+        LIMIT ${limit}
+        `;
+        return reviews;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch Reviews BY Store`);
+    }
+
 }

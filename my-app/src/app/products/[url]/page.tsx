@@ -1,6 +1,6 @@
 
 import { getProduct, getProductByUrl } from "@/app/lib/data";
-import NotFound from "./not-found";
+import { notFound } from "next/navigation";
 import ProductView from "@/app/ui/products/product-view";
 import { Product } from "@/app/lib/definitions";
 export default async function Page(props: { params: Promise<{ url: string }> }) {
@@ -13,7 +13,7 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
     product = await getProductByUrl(url);
 
     if (!product) {
-        return <NotFound />;
+        notFound();
     }
     return <>
         <ProductView product={product} />
