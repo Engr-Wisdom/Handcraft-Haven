@@ -55,9 +55,9 @@ const Login = () => {
 
         // Redirect based on role or to home page
         if (result.user?.role === 'seller') {
-          router.push('/seller/dashboard')
+          window.location.href = '/seller/dashboard' //The page needs to reload in order to see the new dasboard/logout
         } else {
-          router.push('/') // or '/dashboard'
+          window.location.href = '/user/dashboard'
         }
       } else {
         setError(result.error || "Login failed. Please check your credentials.")
