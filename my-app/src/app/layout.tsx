@@ -49,7 +49,11 @@ export default function RootLayout({
     >
       <body className="bg-white min-h-full flex flex-col">
         <Navbar />
-        {children}
+        <div className="bg-gray-200">
+
+          {children}
+        </div>
+        
         <Footer />
       </body>
     </html>

@@ -1,8 +1,8 @@
 
-import { getProduct, getProductByUrl } from "@/app/lib/data";
+import { getLastReviewsByProduct, getProductByUrl } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 import ProductView from "@/app/ui/products/product-view";
-import { Product } from "@/app/lib/definitions";
+import { Product, Review } from "@/app/lib/definitions";
 
 import { Metadata } from "next";
 type Props = {
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
         title: product.name,
-        description: `${product.description.slice(0,100)} sold by ${product.store}`
+        description: `${product.description.slice(0, 100)} sold by ${product.store}`
     }
 }
 
@@ -26,13 +26,17 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
     const params = await props.params;
     const url = params.url;
     let product: Product | undefined;
+    let reviews: Array<Review> | undefined;
     product = await getProductByUrl(url);
+
+
 
     if (!product) {
         notFound();
     }
+    reviews = await getLastReviewsByProduct(product)
     return <>
-        <ProductView product={product} />
+        <ProductView product={product} reviews={reviews} />
     </>
 
 }

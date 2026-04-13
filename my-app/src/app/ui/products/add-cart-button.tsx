@@ -8,7 +8,7 @@ export default function BuyButton({ id }: { id: string }) {
     return (
         <button
             type="button"
-            className="bg-blue-500 w-full hover:bg-blue-600 text-white px-4 py-2 rounded min-[440px]:mt-10 my-4"
+            className="bg-blue-500 w-full font-bold hover:bg-blue-600 text-white px-4 py-2 rounded min-[440px]:mt-10 my-4"
             onClick={addToCar}
         >
             Add to cart

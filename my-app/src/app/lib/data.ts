@@ -2,7 +2,7 @@
 import { promises as fs } from 'fs';
 import { products } from '@/data/cards';
 import postgres from 'postgres';
-import { Product, Store, Review } from './definitions';
+import { Product, Store, Review, Category } from './definitions';
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 import { siteConfig } from '../constants/site';
 import { off } from 'process';
@@ -244,6 +244,33 @@ export async function getLastWrittenReviewByStore(store: Store, limit: number = 
     } catch (err) {
         console.error('Database Error:', err);
         throw new Error(`Failed to fetch Reviews BY Store`);
+    }
+
+}
+export async function getLastReviewsByProduct(product: Product, limit: number = 3) {
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+        const reviews = await sql<Review[]>`${REVIEW_BASE_QUERY}
+        WHERE r.product_id = ${product.id}
+        ORDER BY r.id DESC 
+        LIMIT ${limit}
+        `;
+        return reviews;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch Reviews BY Store`);
+    }
+
+}
+export async function getCategories() {
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+        const categories = await sql<Category[]>`SELECT * FROM categories
+        `;
+        return categories;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch Categories`);
     }
 
 }

@@ -27,3 +27,7 @@ export type Review = {
     date: string;
     message: string;
 };
+export type Category = {
+    id: string;
+    name: string;
+};
