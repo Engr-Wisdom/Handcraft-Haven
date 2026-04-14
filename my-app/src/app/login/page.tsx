@@ -36,24 +36,23 @@ const Login = () => {
 
     try {
       const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      email,
+      password,
+      redirect: false,
+    });
 
-      if (result?.error) {
-        setError("Invalid email or password");
-        return;
-      }
-
-      window.location.href = "/seller/dashboard";
-    } catch (error) {
-      console.error("Login error:", error);
-      setError("Network error. Please check your connection.");
-    } finally {
-      setIsLoading(false);
+    if (result?.error) {
+      setError("Invalid email or password");
+      return;
     }
-  };
+
+    window.location.href = "/seller/dashboard";
+  } catch (error) {
+    console.error("Login error:", error);
+    setError("Network error. Please check your connection.");
+  } finally {
+    setIsLoading(false);
+  }
 
   return (
     <div className='bg-gray-200 py-10 p-4'>

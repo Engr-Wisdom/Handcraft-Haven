@@ -277,7 +277,7 @@ export async function getCategories() {
 
 export async function getUserById(userId: number) {
     try {
-        const users = await sql`
+        const users = await sql<User[]>`
         SELECT *
         FROM users
         WHERE id = ${userId}
@@ -301,5 +301,40 @@ export async function getStoreByOwnerId(ownerId: number) {
     } catch (err) {
         console.error('Database Error:', err);
         throw new Error('Failed to fetch store by owner id');
+    }
+}
+
+export async function insertReview(
+    rating: number,
+    product_id: number,
+    user_id: number,
+    message: string,
+) {
+    try {
+        const review = await sql`
+        INSERT INTO ratings (rating, product_id, user_id, message)
+        VALUES (${rating}, ${product_id}, ${user_id}, ${message})
+        `;
+        return review;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to Insert REVIEW`);
+    }
+}
+
+export async function isProductReviewedByUser(user_id: number, product_id: number) {
+    try {
+        const categories = await sql`
+        SELECT COUNT(*) AS n FROM ratings
+        WHERE user_id = ${user_id} AND product_id = ${product_id}
+        `;
+        if (categories[0].n == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to Insert REVIEW`);
     }
 }
