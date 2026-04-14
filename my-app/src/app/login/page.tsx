@@ -46,7 +46,7 @@ const Login = () => {
         return;
       }
 
-      window.location.href = "/";
+      window.location.href = "/seller/dashboard";
     } catch (error) {
       console.error("Login error:", error);
       setError("Network error. Please check your connection.");

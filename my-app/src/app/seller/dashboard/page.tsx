@@ -15,8 +15,6 @@ export default async function SellerDashboardPage() {
   //Get the current logged-in session
 const session = await auth();
 
-console.log("SESSION IN DASHBOARD:", session);
-
 //If there is no session or no user id, redirect to login
 if (!session?.user?.id) {
   redirect("/login");
