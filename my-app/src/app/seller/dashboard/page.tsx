@@ -1,18 +1,42 @@
 import Link from "next/link";
-import { getProducts, getStores } from "@/app/lib/data";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import {
+  getUserById,
+  getStoreByOwnerId,
+  getProductsByStore,
+} from "@/app/lib/data";
 import StoreCard from "@/app/ui/stores/store-card";
 import ProductCard from "@/app/ui/products/product-card";
 import { formatFloat } from "@/app/lib/utils";
 
 //Exporting and reusing get Stores and products
 export default async function SellerDashboardPage() {
-  const [stores, products] = await Promise.all([
-    getStores(1),
-    getProducts(2),
-  ]);
+  //Get the current logged-in session
+const session = await auth();
 
-  const featuredStore = stores[0];
-  const recentProducts = products.slice(0, 4);
+//If there is no session or no user id, redirect to login
+if (!session?.user?.id) {
+  redirect("/login");
+}
+
+//Get the full user information from the database
+const user = await getUserById(Number(session.user.id));
+
+//Protect this page so only sellers can access it
+if (!user || user.role !== "seller") {
+  redirect("/");
+}
+
+//Get the seller's store using owner_id
+const featuredStore = await getStoreByOwnerId(user.id);
+
+//Get only the products that belong to this seller's store
+const products = featuredStore
+  ? await getProductsByStore(1, featuredStore) // aligned with your data.ts
+  : [];
+
+const recentProducts = products.slice(0, 4);
 
   //quick buttons to add products, to manage stores, and to edit seller profile
   return (
@@ -21,7 +45,9 @@ export default async function SellerDashboardPage() {
         <section className="mb-8 border-b-2 border-amber-400 pb-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Welcome Seller</h1>
+              <h1 className="text-3xl font-bold">
+                Welcome, {user.first_name}
+              </h1>
               <p className="mt-2 text-gray-600 max-w-2xl">
                 Manage your store profile and product listings from one place.
                 Here you can view your public store information, preview your
@@ -31,13 +57,15 @@ export default async function SellerDashboardPage() {
 
             {/*3 buttons: Add a new product, if you dont have a store you can create one, and Edit profile*/}
             <div className="flex flex-wrap gap-3">
-              <Link
-                //Redirect to products just for now
-                href="/products"
-                className="rounded-md bg-amber-700 px-4 py-2 font-semibold text-white transition hover:bg-amber-800"
-              >
-                Add Product
-              </Link>
+              {featuredStore && (
+                <Link
+                  //Redirect to products just for now
+                  href="/products"
+                  className="rounded-md bg-amber-700 px-4 py-2 font-semibold text-white transition hover:bg-amber-800"
+                >
+                  Add Product
+                </Link>
+              )}
 
               {!featuredStore && (
                 <Link
@@ -64,9 +92,9 @@ export default async function SellerDashboardPage() {
         <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-lg border bg-amber-50 p-5 shadow-sm">
             <p className="text-sm text-gray-500">Total Stores</p>
-            <h2 className="mt-2 text-3xl font-bold">{stores.length}</h2>
+            <h2 className="mt-2 text-3xl font-bold">{featuredStore ? 1 : 0}</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Stores currently available in the marketplace.
+              Sellers are limited to one store.
             </p>
           </div>
 
@@ -74,7 +102,7 @@ export default async function SellerDashboardPage() {
             <p className="text-sm text-gray-500">Total Products</p>
             <h2 className="mt-2 text-3xl font-bold">{products.length}</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Product listings currently loaded on this page.
+              Total product listings in your store.
             </p>
           </div>
 
@@ -86,7 +114,7 @@ export default async function SellerDashboardPage() {
                 : "N/A"}
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Average rating for the featured seller store.
+              Average rating for your seller store.
             </p>
           </div>
         </section>
@@ -95,12 +123,14 @@ export default async function SellerDashboardPage() {
         <section className="mb-10">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-bold">Your Store</h2>
-            <Link
-              href="/stores"
-              className="font-semibold text-amber-700 hover:underline"
-            >
-              Edit Store
-            </Link>
+            {featuredStore && (
+              <Link
+                href={`/stores/${featuredStore.seo_url}`}
+                className="font-semibold text-amber-700 hover:underline"
+              >
+                View Store
+              </Link>
+            )}
           </div>
           {/*Ternary operator to display something else when you dont have a store yet 
         or if you have actually a store*/}
