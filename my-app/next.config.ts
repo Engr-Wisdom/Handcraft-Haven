@@ -1,10 +1,19 @@
-const path = require('path')
+const path = require("path");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {
-    root: __dirname,  // Forces Next.js to use THIS folder as root
+    root: __dirname,
   },
-}
 
-module.exports = nextConfig
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;

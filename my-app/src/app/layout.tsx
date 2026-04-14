@@ -4,6 +4,8 @@ import Navbar from "@/app/ui/navbar"
 import "./globals.css";
 import Footer from "./ui/footer";
 import { siteConfig } from "./constants/site";
+import Providers from "./providers";
+
 const { name, description } = siteConfig;
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -37,7 +39,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -48,9 +50,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="bg-white min-h-full flex flex-col">
-        <Navbar />
-        {children}
-        <Footer />
+          <Navbar />
+          {children}
+          <Footer />
       </body>
     </html>
   );

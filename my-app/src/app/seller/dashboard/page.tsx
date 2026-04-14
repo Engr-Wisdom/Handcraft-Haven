@@ -9,6 +9,8 @@ const page = () => {
             dolores voluptatum odio laborum.</p>
         </section>
         </div>
+
+
     </div>
   )
 }

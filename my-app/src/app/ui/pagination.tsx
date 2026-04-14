@@ -11,10 +11,18 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const createPageURL = (pageNumber: number | string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('page', pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
-  };
+  const params = new URLSearchParams(searchParams);
+
+  const page = Number(pageNumber);
+
+  if (page <= 1) {
+    params.delete('page'); // cleaner URL for page 1
+  } else {
+    params.set('page', page.toString());
+  }
+
+  return `${pathname}?${params.toString()}`;
+};
 
   const allPages = generatePagination(currentPage, totalPages);
 
@@ -26,7 +34,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
         <div className="inline-flex">
           <PaginationArrow
             direction="left"
-            href={createPageURL(currentPage - 1)}
+            href={createPageURL(Math.max(1, currentPage - 1))}
             isDisabled={currentPage <= 1}
           />
 
@@ -42,7 +50,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
               return (
                 <PaginationNumber
                   key={`${page}-${index}`}
-                  href={createPageURL(page)}
+                  href={page === "..." ? "#" : createPageURL(page)}
                   page={page}
                   position={position}
                   isActive={currentPage === page}
@@ -53,9 +61,9 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
           <PaginationArrow
             direction="right"
-            href={createPageURL(currentPage + 1)}
+            href={createPageURL(Math.min(totalPages, currentPage + 1))}
             isDisabled={currentPage >= totalPages}
-          />
+          />  
         </div>
       </div>
     </>

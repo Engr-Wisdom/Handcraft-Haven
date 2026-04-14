@@ -11,22 +11,25 @@ export const metadata: Metadata = {
 export default async function Page(props: {
   searchParams?: Promise<{
     page?: string;
+    q?: string;
   }>;
 }) {
-
   const searchParams = await props.searchParams;
+
   const currentPage = Number(searchParams?.page) || 1;
-  const products = await getProducts(currentPage);
-  const totalPages = await getNumberPages();
+  const query = searchParams?.q || "";
 
-
+  const products = await getProducts(currentPage, query);
+  const totalPages = await getNumberPages("", query);
 
   return (
-    <>
-      <ProductTable products={products} title='Latest products' />
+    <div className='bg-gray-200 p-4 sm:p-10'>
+      <ProductTable 
+        products={products} 
+        title={query ? `Results for "${query}"` : "Latest products"} 
+      />
 
       <Pagination totalPages={totalPages} />
-
-    </>
-  )
+    </div>
+  );
 }

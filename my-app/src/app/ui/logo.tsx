@@ -17,7 +17,7 @@ const Logo = ({ setSideBar }: LogoProps) => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-8 h-8 cursor-pointer lg:hidden"
+          className="w-8 h-8 cursor-pointer lg:hidden text-white"
         >
           <path
             strokeLinecap="round"

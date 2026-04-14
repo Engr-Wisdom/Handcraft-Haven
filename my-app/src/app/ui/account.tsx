@@ -47,7 +47,7 @@ const Account = () => {
                 fill="none" viewBox="0 0 24 24" 
                 strokeWidth="1.5" stroke="currentColor" 
                 aria-hidden="true" data-slot="icon" 
-                className="h-6 w-6 cursor-pointer text-text sm:hidden"
+                className="h-6 w-6 cursor-pointer text-text sm:hidden text-white"
                 onClick={() => setAccount(a => !a)}>
                     <path 
                         strokeLinecap="round" 
