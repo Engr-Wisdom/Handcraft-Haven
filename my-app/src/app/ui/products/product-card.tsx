@@ -74,23 +74,18 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3 className="font-semibold text-xs sm:text-sm my-2">{product.name}</h3>
         <p>${product.price}</p>
 
-        <button 
-          className="bg-amber-700 text-white p-2 max-sm:p-1 rounded-full my-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isAdding}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 max-sm:h-[15px] max-sm:w-[15px]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13M10 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"
-                />
-              </svg>
-        </button>
+       <div className="flex justify-between items-center">
+        <Rating product={product} />
+
+         <button className="bg-amber-700 text-white p-2 max-sm:p-1 rounded-full my-2 disabled:opacity-50 
+         disabled:cursor-not-allowed" disabled={isAdding}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 max-sm:h-[15px] max-sm:w-[15px]"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13M10 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
+            </svg>
+          </button>
+       </div>
       </div>
     </li>
   );
