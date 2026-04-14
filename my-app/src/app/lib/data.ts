@@ -328,11 +328,7 @@ export async function isProductReviewedByUser(user_id: number, product_id: numbe
         SELECT COUNT(*) AS n FROM ratings
         WHERE user_id = ${user_id} AND product_id = ${product_id}
         `;
-        if (categories[0].n == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return categories[0].n != 0;
     } catch (err) {
         console.error('Database Error:', err);
         throw new Error(`Failed to Insert REVIEW`);
