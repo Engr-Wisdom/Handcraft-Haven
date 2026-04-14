@@ -52,7 +52,7 @@ const Login = () => {
     setError("Network error. Please check your connection.");
   } finally {
     setIsLoading(false);
-  }
+  }};
 
   return (
     <div className='bg-gray-200 py-10 p-4'>
