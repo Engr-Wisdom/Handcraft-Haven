@@ -274,3 +274,32 @@ export async function getCategories() {
     }
 
 }
+
+export async function getUserById(userId: number) {
+    try {
+        const users = await sql`
+        SELECT *
+        FROM users
+        WHERE id = ${userId}
+        LIMIT 1
+        `;
+        return users[0];
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error('Failed to fetch user by id');
+    }
+}
+
+export async function getStoreByOwnerId(ownerId: number) {
+    try {
+        const stores = await sql<Store[]>`${STORE_BASE_QUERY}
+        WHERE s.owner_id = ${ownerId}
+        GROUP BY s.id
+        LIMIT 1
+        `;
+        return stores[0];
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error('Failed to fetch store by owner id');
+    }
+}
