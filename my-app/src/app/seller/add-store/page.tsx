@@ -25,12 +25,7 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-    if (!user.id) {
-        alert("You must loggged in to create a store")
-        redirect("/login")
-    }
+    setIsLoading(true)
 
     if (!formData.name) {
       alert("Store name is required");
@@ -47,7 +42,6 @@ const Page = () => {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, ""),
-        owner_id: user.id
     };
 
     setIsLoading(true);

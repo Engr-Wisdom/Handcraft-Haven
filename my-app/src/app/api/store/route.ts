@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
@@ -7,14 +8,22 @@ export async function POST(req: Request) {
 
     const { name, bio, image, seo_url } = body;
 
+    const cookieStore = cookies();
+    const owner_id = (await cookieStore).get("user_id")?.value;
+
+    if (!owner_id) {
+      return NextResponse.json(
+        { error: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+
     if (!name) {
       return NextResponse.json(
         { error: "Store name is required" },
         { status: 400 }
       );
     }
-
-    const owner_id = 7;
 
     const query = `
       INSERT INTO stores (name, bio, image, seo_url, owner_id)
@@ -27,10 +36,7 @@ export async function POST(req: Request) {
       bio || "",
       image || "",
       seo_url ||
-        name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, ""),
+        name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""),
       owner_id,
     ];
 
@@ -40,13 +46,6 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     console.error("STORE API ERROR:", error);
-
-    if (error.code === "23505") {
-      return NextResponse.json(
-        { error: "Store name already exists" },
-        { status: 400 }
-      );
-    }
 
     return NextResponse.json(
       { error: "Failed to create store" },
