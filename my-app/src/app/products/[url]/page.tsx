@@ -1,8 +1,8 @@
 
-import { getProduct, getProductByUrl } from "@/app/lib/data";
+import { getLastReviewsByProduct, getProductByUrl, getUserByID, isProductReviewedByUser } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 import ProductView from "@/app/ui/products/product-view";
-import { Product } from "@/app/lib/definitions";
+import { Product, Review, User } from "@/app/lib/definitions";
 
 import { Metadata } from "next";
 type Props = {
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
         title: product.name,
-        description: `${product.description.slice(0,100)} sold by ${product.store}`
+        description: `${product.description.slice(0, 100)} sold by ${product.store}`
     }
 }
 
@@ -26,13 +26,30 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
     const params = await props.params;
     const url = params.url;
     let product: Product | undefined;
-    product = await getProductByUrl(url);
+    let user: User | undefined;
+    let reviews: Array<Review> | undefined;
+    let user_id = 3;
+    let isReviewed: boolean;
+    [product, user] = await Promise.all([
+        getProductByUrl(url),
+        getUserByID(user_id),
+
+
+    ]);
+
+    const name = `${user.first_name} ${user.last_name}`;
+
+
 
     if (!product) {
         notFound();
     }
+    isReviewed = await isProductReviewedByUser(user_id, Number(product.id));
+    console.log("Reviewed: " + isReviewed)
+    const url_product = '/products/' + url;
+    reviews = await getLastReviewsByProduct(product)
     return <>
-        <ProductView product={product} />
+        <ProductView product={product} reviews={reviews} name={name} url={url_product} isReviewed={isReviewed} />
     </>
 
 }

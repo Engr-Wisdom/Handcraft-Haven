@@ -53,3 +53,8 @@ export function numberToHearts(number: number) {
     }
     return stars;
 }
+
+export async function sleep(seconds: number) {
+    seconds = seconds * 1000;
+    await new Promise((resolve) => setTimeout(resolve, seconds));
+}
