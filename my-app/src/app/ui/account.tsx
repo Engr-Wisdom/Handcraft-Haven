@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -124,13 +124,50 @@ const Account = () => {
                 setAccount(false);
               }}
             >
-              Login
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
+                {user ? (
+                    <>
+                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
+                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            goToDashboard()
+                            setAccount(false);
+                        }}>
+                            Dashboard
+                        </button>
 
-export default Account;
+                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
+                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            handleLogout()
+                            setAccount(false);
+                        }}>
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
+                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            router.push("/sign-up")
+                            setAccount(false);
+                        }}>
+                            Sign up
+                        </button>
+
+                        <button className='bg-white text-black px-4 py-1 rounded-full text-sm font-semibold cursor-pointer
+                        max-sm:active:bg-gray-300 transition max-sm:p-2 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            router.push("/login")
+                            setAccount(false);
+                        }}>
+                            Login
+                        </button>
+                    </>
+                )}
+            </div>
+        </div>
+    )
+}
+
+export default Account

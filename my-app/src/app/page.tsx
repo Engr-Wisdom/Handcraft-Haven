@@ -1,13 +1,14 @@
-import React from "react";
-import Image from "next/image";
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { products } from "@/data/cards";
-import ProductTable from "./ui/products/products-table";
-import { ShopNow } from "./ui/buttons";
+import React, { Suspense } from 'react'
+import Image from "next/image"
+import Card from "@/app/ui/card"
+import { ShopNow } from './ui/buttons'
+import ProductTable, { ProductHomeTable } from './ui/products/products-table'
+import { getPopularProducts, getStores } from './lib/data'
+import { StoresViewHome } from './ui/stores/stores-view'
 
-const Home = async () => {
-    
+
+export default async function Home() {
+
   return (
     <div className='bg-gray-200 text-black p-4 sm:p-10'>
       <div className='flex items-center justify-between gap-20 max-md:flex-col max-lg:gap-10 mb-20'>
@@ -24,10 +25,13 @@ const Home = async () => {
           max-sm:h-full rounded-2xl ' />
         </div>
       </div>
+      <Suspense >
+        <ProductHomeTable />
+      </Suspense>
 
-      <ProductTable products={products} title='Most Popular' />
+      <Suspense >
+        <StoresViewHome />
+      </Suspense>
     </div>
   )
 }
-
-export default Home

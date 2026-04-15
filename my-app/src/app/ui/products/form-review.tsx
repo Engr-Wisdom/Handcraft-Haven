@@ -5,13 +5,13 @@ import { Product } from "@/app/lib/definitions";
 import { useActionState } from "react";
 export default function FormReview({ name, product, url }: { name: string, product: Product, url: string }) {
     const [state, formAction, isPending] = useActionState(sendReview, null);
-    return <div className={`${state?.success && "hidden"} border-t-2 mt-5`}>
+    return <div className={`${state?.success && "hidden"} border-t-2 mt-5 border-amber-700`}>
 
         <h3 className="font-bold text-1xl ">Leave a review</h3>
         <form action={formAction} className={`grid p-2 `}>
             <label className="font-bold m-1 ">
                 Author:
-                <input type="text" disabled name="name" className="ml-1 " value={name} />
+                <input type="text " disabled name="name" className="ml-1 text-amber-700" value={name} />
             </label>
             <RatingSelector />
             {state?.errors?.rating && (

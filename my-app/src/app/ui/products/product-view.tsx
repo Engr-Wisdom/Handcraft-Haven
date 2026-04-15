@@ -37,7 +37,8 @@ export default function ProductView({ product, reviews, name, url, isReviewed }:
                 <Rating product={product} />
                 <BuyButton id={product.id} />
                 <ProductReviews reviews={reviews} />
-                {!isReviewed && <FormReview name={name} product={product} url={url} />}
+                {!isReviewed && name !== "" && <FormReview name={name} product={product} url={url} />}
+                {name == "" && <p className="text-lg"><a className="font-bold text-blue-500" href="/login">Login</a> to leave a review</p>}
             </div>
         </div>
     </>
