@@ -1,11 +1,13 @@
-import React from 'react'
-import Image from "next/image"
-import { products } from "@/data/cards"
-import Card from "@/app/ui/card"
-import { ShopNow } from './ui/buttons'
-import ProductTable from './ui/products/products-table'
+import React from "react";
+import Image from "next/image";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { products } from "@/data/cards";
+import ProductTable from "./ui/products/products-table";
+import { ShopNow } from "./ui/buttons";
 
-const Home = () => {
+const Home = async () => {
+    
   return (
     <div className='bg-gray-200 text-black p-4 sm:p-10'>
       <div className='flex items-center justify-between gap-20 max-md:flex-col max-lg:gap-10 mb-20'>

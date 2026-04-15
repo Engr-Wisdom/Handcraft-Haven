@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { revalidatePath } from "next/cache";
 import { insertReview, isProductReviewedByUser } from "./data";
 import { sleep } from "./utils";
-import getSessionLocal from "./local-auth";
 
 const FormReview = z.object({
     message: z.string(),
@@ -26,17 +25,11 @@ export type ReviewState = {
 };
 const CreateReview = FormReview;
 export async function sendReview(
-    prevState: ReviewState | null,
+    prevState: ReviewState | null,   // ← This is required
     formData: FormData
 ): Promise<ReviewState> {
-    let user_id: number | undefined;
-    user_id = await getSessionLocal();
-    if (user_id === 0) {
-        return {
-            success: false,
-            message: 'Please Log In to Review.',
-        }
-    }
+    const user_id = 3;
+
     const validatedFields = CreateReview.safeParse({
         message: formData.get('review-text'),
         rating: formData.get('rating'),

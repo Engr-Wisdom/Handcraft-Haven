@@ -4,7 +4,7 @@ import Navbar from "@/app/ui/navbar"
 import "./globals.css";
 import Footer from "./ui/footer";
 import { siteConfig } from "./constants/site";
-import Providers from "./providers";
+import { Toaster } from "react-hot-toast";
 
 const { name, description } = siteConfig;
 const baseUrl = process.env.VERCEL_URL
@@ -52,6 +52,7 @@ export default async function RootLayout({
       <body className="bg-white min-h-full flex flex-col">
           <Navbar />
           {children}
+          <Toaster position="top-right" />
           <Footer />
       </body>
     </html>

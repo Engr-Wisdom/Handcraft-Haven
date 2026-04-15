@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 export default async function Page() {
     const page = 1;
     const stores = await getStores(page)
-    console.log(stores)
     return (
         <div className="grid">
             <section className="bg-gradient-to-br from-amber-50 to-orange-50 py-5 px-4">

@@ -11,7 +11,7 @@ const Navbar = () => {
   const [sideBar, setSideBar] = useState(false)
 
   return (
-    <div className='bg-amber-800 p-4 sm:px-10 flex items-center justify-between z-[999]'>
+    <div className='bg-amber-800 p-4 sm:px-10 flex items-center justify-between z-1 sticky top-0 left-0'>
       <div className='flex gap-5'>
         <Logo setSideBar={setSideBar} />
         <Search />
