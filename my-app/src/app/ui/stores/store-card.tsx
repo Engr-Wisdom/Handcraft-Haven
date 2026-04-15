@@ -16,7 +16,7 @@ export default function StoreCard({ store }: { store: Store }) {
                 /></a>
             </div>
             <a href={`/stores/${store.seo_url}`} className="hover-animation text-amber-700 bottom-1 text-2xl font-bold w-full text-center active:opacity-75">{store.name}</a>
-            <p className="text-center px-2">{store.bio.slice(0,50) + "..."}</p>
+            <p className="text-center px-2">{store.bio.slice(0, 50) + "..."}</p>
             <span className="border-1 border-red-400/50 bg-white/90 absolute p-1 font-bold rounded-lg right-2 top-2">❤️{formatFloat(store.avg_rating)}</span>
             <span className="hover-animation self-end m-2 "><a href={`/stores/${store.seo_url}`} className="text-amber-700  font-bold w-full  active:opacity-75">See Products →</a></span>
 
