@@ -58,10 +58,12 @@ export default async function Page(props: {
         <div>
             {page === 1 && <StorePageCard store={store} reviews={reviews} />}
 
-            <div className="p-2 sm:px-10 py-10">
-                <ProductTable products={products} title={page === 1 ? "Lastest Products" : `Latest Products | ${store.name}`} />
-                <Pagination totalPages={totalPages} />
-            </div>
+            <ProductTable products={products} title={page === 1 ? "Latest Products" : `Latest Products | ${store.name}`} />
+            <Pagination totalPages={totalPages} />
+
+
+
+
         </div>
     </>
 

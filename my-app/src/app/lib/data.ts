@@ -2,7 +2,7 @@
 import { promises as fs } from 'fs';
 import { products } from '@/data/cards';
 import postgres from 'postgres';
-import { Product, Store, Review } from './definitions';
+import { Product, Store, Review, User, Category } from './definitions';
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 import { siteConfig } from '../constants/site';
 import { off } from 'process';
@@ -18,7 +18,7 @@ const BASE_PRODUCT_SQL = sql`SELECT p.*, c.name AS category, s.name AS store, p.
 const STORE_BASE_QUERY = sql`SELECT s.*, AVG(r.rating) as avg_rating FROM ratings as r
 JOIN products as p
 ON r.product_id = p.id
-JOIN stores as s
+RIGHT JOIN stores as s
 ON s.id = p.store_id
 `;
 const REVIEW_BASE_QUERY = sql`SELECT CONCAT(u.first_name,' ', u.last_name) AS user_name, p.store_id, r.* FROM ratings AS r
@@ -46,11 +46,10 @@ export async function getNumberPages(type: string = '', query: string = '') {
                 const data = await sql`
                 SELECT COUNT(*) AS data 
                 FROM products 
-                ${
-                  query
-                    ? sql`WHERE name ILIKE ${'%' + query + '%'}`
-                    : sql``
-                }
+                ${query
+                        ? sql`WHERE name ILIKE ${'%' + query + '%'}`
+                        : sql``
+                    }
                 `;
                 return Math.ceil(Number(data[0].data) / page_pagination);
 
@@ -158,11 +157,10 @@ export async function getProducts(currentPage: number, query: string = "") {
     try {
         const data = await sql<Product[]>`
         ${BASE_PRODUCT_SQL}
-        ${
-          query
-            ? sql`WHERE p.name ILIKE ${'%' + query + '%'}`
-            : sql``
-        }
+        ${query
+                ? sql`WHERE p.name ILIKE ${'%' + query + '%'}`
+                : sql``
+            }
         ORDER BY p.id DESC
         LIMIT ${page_pagination} OFFSET ${offset}
         `;
@@ -257,4 +255,77 @@ export async function getLastWrittenReviewByStore(store: Store, limit: number = 
         throw new Error(`Failed to fetch Reviews BY Store`);
     }
 
+}
+
+export async function getLastReviewsByProduct(product: Product, limit: number = 3) {
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+        const reviews = await sql<Review[]>`${REVIEW_BASE_QUERY}
+        WHERE r.product_id = ${product.id}
+        ORDER BY r.id DESC 
+        LIMIT ${limit}
+        `;
+        return reviews;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch Reviews BY Store`);
+    }
+
+}
+
+export async function getUserByID(id: number) {
+    // await new Promise((resolve) => setTimeout(resolve, 10000));
+    try {
+        const data = await sql<User[]>`SELECT id,first_name,last_name,email, role  FROM users
+         WHERE id = ${id}
+        `;
+        const user = data[0];
+        return user;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch c. ${id} USER`);
+    }
+}
+
+export async function isProductReviewedByUser(user_id: number, product_id: number) {
+    try {
+        const categories = await sql`
+        SELECT COUNT(*) AS n FROM ratings
+        WHERE user_id = ${user_id} AND product_id = ${product_id}
+        `;
+        return categories[0].n != 0;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to Insert REVIEW`);
+    }
+}
+
+export async function getCategories() {
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+        const categories = await sql<Category[]>`SELECT * FROM categories
+        `;
+        return categories;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch Categories`);
+    }
+
+}
+export async function insertReview(
+    rating: number,
+    product_id: number,
+    user_id: number,
+    message: string,
+) {
+    try {
+        const review = await sql`
+        INSERT INTO ratings (rating, product_id, user_id, message)
+        VALUES (${rating}, ${product_id}, ${user_id}, ${message})
+        `;
+        return review;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to Insert REVIEW`);
+    }
 }
