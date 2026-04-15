@@ -1,11 +1,13 @@
 import React from 'react'
 import Image from "next/image"
-import { products } from "@/data/cards"
 import Card from "@/app/ui/card"
 import { ShopNow } from './ui/buttons'
-import ProductTable from './ui/products/products-table'
+import ProductTable, { ProductHomeTable } from './ui/products/products-table'
+import { getPopularProducts } from './lib/data'
 
-const Home = () => {
+
+export default async function Home() {
+  const products = await getPopularProducts();
   return (
     <div className='bg-gray-200 text-black p-4 sm:p-10'>
       <div className='flex items-center justify-between gap-20 max-md:flex-col max-lg:gap-10 mb-20'>
@@ -23,9 +25,7 @@ const Home = () => {
         </div>
       </div>
 
-      <ProductTable products={products} title='Most Popular' />
+      <ProductHomeTable products={products} title='Most Popular' filter={false}  />
     </div>
   )
 }
-
-export default Home
