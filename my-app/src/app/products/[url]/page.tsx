@@ -30,9 +30,16 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
     let reviews: Array<Review> | undefined;
     let user_id = 3;
     let isReviewed: boolean;
-    [product, user] = await Promise.all([
-        getProductByUrl(url),
-        getUserByID(user_id),
+    let name = "";
+    if (user_id != 0) {
+        [product, user] = await Promise.all([
+            getProductByUrl(url),
+            getUserByID(user_id),
+        ]);
+        name = `${user.first_name} ${user.last_name}`;
+    } else {
+        [product] = await Promise.all([
+            getProductByUrl(url),
 
 
     ]);

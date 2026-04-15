@@ -263,91 +263,89 @@ const Account = () => {
     }
   };
 
-  const goToDashboard = () => {
-    if (user?.role === "seller") {
-      router.push("/seller/dashboard");
-    } else {
-      router.push("/user/dashboard");
-    }
-  };
+    const goToDashboard = () => {
+        if (user?.role === "seller") {
+            router.push("/seller/dashboard");
+        } else {
+            router.push("/user/dashboard");
+        }
+    };
 
-  return (
-    <div className="relative">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="1.5"
-        stroke="currentColor"
-        className="h-6 w-6 cursor-pointer text-white sm:hidden"
-        onClick={(e) => {
-          e.stopPropagation();
-          setAccount((a) => !a);
-        }}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-        />
-      </svg>
+    return (
+        <div className="relative">
 
-      <div
-        className={`flex items-center gap-5 justify-end max-sm:bg-white max-sm:flex-col max-sm:fixed right-0 top-12 
-        max-sm:rounded max-sm:gap-0 max-sm:p-1 ${
-          account ? "opacity-100 scale-100" : "max-sm:opacity-0 max-sm:scale-95"
-        } transition-all duration-300`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {isLoggedIn ? (
-          <>
-            <button
-              className="text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
-              max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6"
-              onClick={() => {
-                goToDashboard();
-                setAccount(false);
-              }}
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+                data-slot="icon"
+                className="h-6 w-6 cursor-pointer text-text sm:hidden text-white"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setAccount(a => !a);
+                }}
             >
-              Dashboard
-            </button>
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                />
+            </svg>
 
-            <button
-              className="text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
-              max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6"
-              onClick={handleLogout}
+            <div
+                className={`flex items-center gap-5 justify-end max-sm:bg-white max-sm:flex-col max-sm:fixed right-0 top-12 
+                max-sm:rounded max-sm:gap-0 max-sm:p-1 ${
+                    account ? "opacity-100 scale-100" : "max-sm:opacity-0 max-sm:scale-95"
+                } transition-all duration-300`}
+                onClick={(e) => e.stopPropagation()}
             >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className="text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
-              max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6"
-              onClick={() => {
-                router.push("/sign-up");
-                setAccount(false);
-              }}
-            >
-              Sign up
-            </button>
+                {user ? (
+                    <>
+                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
+                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            goToDashboard()
+                            setAccount(false);
+                        }}>
+                            Dashboard
+                        </button>
 
-            <button
-              className="bg-white text-black px-4 py-1 rounded-full text-sm font-semibold cursor-pointer
-              max-sm:active:bg-gray-300 transition max-sm:p-2 max-sm:rounded-sm max-sm:w-full max-sm:px-6"
-              onClick={() => {
-                router.push("/login");
-                setAccount(false);
-              }}
-            >
-              Login
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
+                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
+                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            handleLogout()
+                            setAccount(false);
+                        }}>
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
+                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            router.push("/sign-up")
+                            setAccount(false);
+                        }}>
+                            Sign up
+                        </button>
 
-export default Account;
+                        <button className='bg-white text-black px-4 py-1 rounded-full text-sm font-semibold cursor-pointer
+                        max-sm:active:bg-gray-300 transition max-sm:p-2 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
+                        onClick={() => {
+                            router.push("/login")
+                            setAccount(false);
+                        }}>
+                            Login
+                        </button>
+                    </>
+                )}
+            </div>
+        </div>
+    )
+}
+
+export default Account
