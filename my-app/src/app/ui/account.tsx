@@ -219,7 +219,6 @@
 
 
 
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -244,7 +243,7 @@ const Account = () => {
     return () => {
       document.removeEventListener("click", handleClick);
     };
-  }, []);
+  }, []); // ← Make sure this is properly closed
 
   const handleLogout = async () => {
     try {
@@ -254,33 +253,6 @@ const Account = () => {
       });
 
       localStorage.removeItem("user");
-      setUser(null);
-      setAccount(false);
-
-      router.push("/");
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
-
-    const goToDashboard = () => {
-        if (user?.role === "seller") {
-            router.push("/seller/dashboard");
-        } else {
-            router.push("/user/dashboard");
-        }
-    };
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      localStorage.removeItem("user");
-
       setUser(null);
       setAccount(false);
 
@@ -306,7 +278,9 @@ const Account = () => {
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        className="h-6 w-6 cursor-pointer text-white sm:hidden"
+        aria-hidden="true"
+        data-slot="icon"
+        className="h-6 w-6 cursor-pointer text-text sm:hidden text-white"
         onClick={(e) => {
           e.stopPropagation();
           setAccount((a) => !a);
@@ -342,8 +316,9 @@ const Account = () => {
             <button
               className="text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
               max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6"
-              onClick={async () => {
-                await handleLogout();
+              onClick={() => {
+                handleLogout();
+                setAccount(false);
               }}
             >
               Logout
@@ -370,50 +345,13 @@ const Account = () => {
                 setAccount(false);
               }}
             >
-                {user ? (
-                    <>
-                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
-                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
-                        onClick={() => {
-                            goToDashboard()
-                            setAccount(false);
-                        }}>
-                            Dashboard
-                        </button>
+              Login
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
-                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
-                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
-                        onClick={() => {
-                            handleLogout()
-                            setAccount(false);
-                        }}>
-                            Logout
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <button className='text-white text-sm hover:underline max-sm:text-black max-sm:p-2 cursor-pointer
-                        max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
-                        onClick={() => {
-                            router.push("/sign-up")
-                            setAccount(false);
-                        }}>
-                            Sign up
-                        </button>
-
-                        <button className='bg-white text-black px-4 py-1 rounded-full text-sm font-semibold cursor-pointer
-                        max-sm:active:bg-gray-300 transition max-sm:p-2 max-sm:rounded-sm max-sm:w-full max-sm:px-6'
-                        onClick={() => {
-                            router.push("/login")
-                            setAccount(false);
-                        }}>
-                            Login
-                        </button>
-                    </>
-                )}
-            </div>
-        </div>
-    )
-}
-
-export default Account
+export default Account;
