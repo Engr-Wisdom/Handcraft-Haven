@@ -10,7 +10,6 @@ const Page = () => {
     name: "",
     bio: "",
     image: "",
-    seo_url: "",
   });
 
   const handleChange = (
@@ -36,13 +35,7 @@ const Page = () => {
     const store = {
       name: formData.name,
       bio: formData.bio,
-      image: formData.image,
-      seo_url:
-        formData.seo_url ||
-        formData.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, ""),
+      image: formData.image
     };
 
     const res = await fetch("/api/store", {
@@ -72,8 +65,7 @@ const Page = () => {
     setFormData({
       name: "",
       bio: "",
-      image: "",
-      seo_url: "",
+      image: ""
     });
 
     setIsLoading(false);
@@ -94,12 +86,6 @@ const Page = () => {
           <label>Store Image</label>
           <input type="text" name="image" value={formData.image} onChange={handleChange} 
           className='border-2 rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none'/>
-        </div>
-
-        <div>
-          <label>SEO URL</label>
-          <input type="text" name="seo_url" value={formData.seo_url} onChange={handleChange} className='border-2 rounded 
-          p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none'/>
         </div>
 
         <div>

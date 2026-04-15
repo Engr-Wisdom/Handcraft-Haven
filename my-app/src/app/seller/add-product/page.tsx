@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-const page = () => {
-    const [isLoading, setIsLoading] = useState(false)
+const Page = () => {
+  const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -11,78 +16,96 @@ const page = () => {
     price: "",
     image: "",
     category_id: "",
-    store_id: "",
     is_popular: false,
-    seo_url: "",
   });
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+
+        if (data.success) {
+          setCategories(data.categories);
+        }
+      } catch (error) {
+        toast.error("Failed to load categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
 
     setFormData((prev) => ({
-      ...prev, [name]: type === "checkbox" ? checked : value,
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.price || !formData.category_id) {
-    alert("Price and Category ID are required");
-    return;
-  }
+    if (!formData.price || !formData.category_id) {
+      toast.error("Price and Category are required");
+      return;
+    }
 
-  const product = {
-    name: formData.name,
-    description: formData.description,
-    price: Number(formData.price),
-    image: formData.image,
-    category_id: Number(formData.category_id),
-    store_id: Number(formData.store_id),
-    is_popular: formData.is_popular,
-    seo_url:
-      formData.seo_url ||
-      formData.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, ""),
+    const product = {
+      name: formData.name,
+      description: formData.description,
+      price: Number(formData.price),
+      image: formData.image,
+      category_id: Number(formData.category_id),
+      is_popular: formData.is_popular,
+    };
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(product),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        if (
+          res.status === 401 ||
+          res.status === 400 &&
+          data.message?.includes("store")
+        ) {
+          toast.error("You must create a store first");
+          router.push("/seller/create-store");
+          return;
+        }
+
+        toast.error(data.message || "Something went wrong");
+        return;
+      }
+
+      toast.success("Product added successfully 🎉");
+
+      setFormData({
+        name: "",
+        description: "",
+        price: "",
+        image: "",
+        category_id: "",
+        is_popular: false,
+      });
+    } catch (error) {
+      toast.error("Server error");
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  setIsLoading(true)
-
-  const res = await fetch("/api/products", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(product),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    console.error("FULL API ERROR:", {
-      status: res.status,
-      data,
-    });
-    return;
-  }
-
-  alert("Product added successfully!");
-
-  setIsLoading(false)
-
-  setFormData({
-    name: "",
-    description: "",
-    price: "",
-    image: "",
-    category_id: "",
-    store_id: "",
-    is_popular: false,
-    seo_url: "",
-  });
-};
 
   return (
     <div className='bg-gray-200 py-10 p-4'>
@@ -109,21 +132,13 @@ const page = () => {
 
             <div className="mt-5">
                 <label htmlFor="category_id">Product Category</label>
-                <input name="category_id" type="number" value={formData.category_id} onChange={handleChange} className='border-2 
-                rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' required />
-            </div>
-
-            <div className="mt-5">
-                <label htmlFor="store_id">Store</label>
-                <input name="store_id" type="number" value={formData.category_id} onChange={handleChange} className='border-2 
-                rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' required />
-            </div>
-
-
-            <div className="mt-5">
-                <label htmlFor="seo_url">SEO URL (optional)</label>
-                <input name="seo_url" value={formData.seo_url} onChange={handleChange} className='border-2 rounded 
-                p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' />
+                <select name="category_id" value={formData.category_id} onChange={handleChange} className='border-2 
+                rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' required>
+                  <option value="">Select Category</option>
+                  {categories.map(category => (
+                    <option value={category.id} key={category.id}>{category.name}</option>
+                  ))}
+                </select>
             </div>
 
             <label className="flex items-center gap-2 mt-5">
@@ -156,5 +171,4 @@ const page = () => {
   );
 }
 
-export default page
-
+export default Page
