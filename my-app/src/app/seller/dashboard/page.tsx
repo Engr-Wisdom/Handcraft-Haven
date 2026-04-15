@@ -38,6 +38,16 @@ const products = featuredStore
 
 const recentProducts = products.slice(0, 4);
 
+//Get the seller's store using owner_id
+const featuredStore = await getStoreByOwnerId(Number(user.id));
+
+//Get only the products that belong to this seller's store
+const products = featuredStore
+  ? await getProductsByStore(1, featuredStore) // aligned with your data.ts
+  : [];
+
+const recentProducts = products.slice(0, 4);
+
   //quick buttons to add products, to manage stores, and to edit seller profile
   return (
     <div className="bg-gray-200 text-black p-4 sm:p-10">

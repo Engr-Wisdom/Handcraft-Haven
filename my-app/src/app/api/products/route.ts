@@ -20,10 +20,9 @@ export async function GET() {
       products: result.rows,
     });
   } catch (error) {
-    console.error("GET Error:", error);
     return NextResponse.json(
       { success: false, message: "Failed to fetch products" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
