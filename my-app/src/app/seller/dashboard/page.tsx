@@ -13,40 +13,30 @@ import { formatFloat } from "@/app/lib/utils";
 //Exporting and reusing get Stores and products
 export default async function SellerDashboardPage() {
   //Get the current logged-in session
-const session = await auth();
+  const session = await auth();
 
-//If there is no session or no user id, redirect to login
-if (!session?.user?.id) {
-  redirect("/login");
-}
+  //If there is no session or no user id, redirect to login
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
 
-//Get the full user information from the database
-const user = await getUserById(Number(session.user.id));
+  //Get the full user information from the database
+  const user = await getUserById(Number(session.user.id));
 
-//Protect this page so only sellers can access it
-if (!user || user.role !== "seller") {
-  redirect("/");
-}
+  //Protect this page so only sellers can access it
+  if (!user || user.role !== "seller") {
+    redirect("/");
+  }
 
-//Get the seller's store using owner_id
-const featuredStore = await getStoreByOwnerId(Number(user.id));
+  //Get the seller's store using owner_id (DECLARED ONCE)
+  const featuredStore = await getStoreByOwnerId(Number(user.id));
 
-//Get only the products that belong to this seller's store
-const products = featuredStore
-  ? await getProductsByStore(1, featuredStore) // aligned with your data.ts
-  : [];
+  //Get only the products that belong to this seller's store (DECLARED ONCE)
+  const products = featuredStore
+    ? await getProductsByStore(1, featuredStore)
+    : [];
 
-const recentProducts = products.slice(0, 4);
-
-//Get the seller's store using owner_id
-const featuredStore = await getStoreByOwnerId(Number(user.id));
-
-//Get only the products that belong to this seller's store
-const products = featuredStore
-  ? await getProductsByStore(1, featuredStore) // aligned with your data.ts
-  : [];
-
-const recentProducts = products.slice(0, 4);
+  const recentProducts = products.slice(0, 4);
 
   //quick buttons to add products, to manage stores, and to edit seller profile
   return (
@@ -54,43 +44,56 @@ const recentProducts = products.slice(0, 4);
       <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-md p-6 sm:p-10">
         <section className="mb-10 text-justify">
           <h1 className="text-3xl border-b-2 border-amber-400 pb-2">
-            Welcome <span className="font-bold text-blue-400 min-[400px]:inline block">{user.first_name + " " + user.last_name}</span>
+            Welcome{" "}
+            <span className="font-bold text-blue-400 min-[400px]:inline block">
+              {user.first_name + " " + user.last_name}
+            </span>
           </h1>
         </section>
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {store ? <a
-            href="/seller/add-product"
-            className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
-          >
-            <h2 className="text-xl font-semibold mb-2">Create Product</h2>
-            <p className="text-sm text-gray-600">
-              Create and publish a new product.
-            </p>
-          </a> : <div
+          {featuredStore ? (
+            <a
+              href="/seller/add-product"
+              className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
+            >
+              <h2 className="text-xl font-semibold mb-2">Create Product</h2>
+              <p className="text-sm text-gray-600">
+                Create and publish a new product.
+              </p>
+            </a>
+          ) : (
+            <div className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white">
+              <p className="text-sm text-gray-600">
+                Create a store to add your products
+              </p>
+            </div>
+          )}
 
-            className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
-          >
-            <p className="text-sm text-gray-600">
-              Create a store to add your products
-            </p>
-          </div>}
-
-          {store ? <a href="/seller/edit-store"
-            className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
-          >
-            <h2 className="text-xl font-semibold mb-2">Edit Store</h2>
-            <p className="text-sm text-gray-600">
-              Change <span className="font-bold text-blue-700">{store.name}</span> information.
-            </p>
-          </a> : <a
-            href="/seller/add-store"
-            className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
-          >
-            <h2 className="text-xl font-semibold mb-2">Create Store</h2>
-            <p className="text-sm text-gray-600">
-              Set up your store information.
-            </p>
-          </a>}
+          {featuredStore ? (
+            <a
+              href="/seller/edit-store"
+              className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
+            >
+              <h2 className="text-xl font-semibold mb-2">Edit Store</h2>
+              <p className="text-sm text-gray-600">
+                Change{" "}
+                <span className="font-bold text-blue-700">
+                  {featuredStore.name}
+                </span>{" "}
+                information.
+              </p>
+            </a>
+          ) : (
+            <a
+              href="/seller/add-store"
+              className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
+            >
+              <h2 className="text-xl font-semibold mb-2">Create Store</h2>
+              <p className="text-sm text-gray-600">
+                Set up your store information.
+              </p>
+            </a>
+          )}
           <a
             href="/profile/edit"
             className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
@@ -103,5 +106,5 @@ const recentProducts = products.slice(0, 4);
         </section>
       </div>
     </div>
-  )
+  );
 }
