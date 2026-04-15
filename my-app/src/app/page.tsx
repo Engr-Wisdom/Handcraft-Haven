@@ -3,7 +3,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { products } from "@/data/cards";
-import Card from "@/app/ui/card";
+import ProductTable from "./ui/products/products-table";
 import { ShopNow } from "./ui/buttons";
 
 const Home = async () => {

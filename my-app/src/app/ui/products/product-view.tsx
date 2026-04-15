@@ -10,7 +10,7 @@ import { Suspense } from "react"
 export default function ProductView({ product, reviews, name, url, isReviewed }: { product: Product, reviews: Array<Review>, name: string, url: string, isReviewed: boolean }) {
 
     return <>
-        <div id="product" className="grid min-[440px]:grid-cols-2 grid-cols-1 w-[100%] p-2">
+        <div id="product" className="grid min-[440px]:grid-cols-2 grid-cols-1 w-full p-2">
 
             <div className="">
                 <div className="text-sm mb-1 ml-2 text-blue-800 font-bold">

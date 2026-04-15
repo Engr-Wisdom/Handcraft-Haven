@@ -2,70 +2,55 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
 
 const Account = () => {
-    const [account, setAccount] = useState(false)
-    const [user, setUser] = useState<any>(null);
-    const router = useRouter()
+  const [account, setAccount] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+  const isLoggedIn = !!user;
 
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
 
-        const handleClick = () => setAccount(false);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
 
-        document.addEventListener("click", handleClick);
+    const handleClick = () => setAccount(false);
 
-        return () => {
-            document.removeEventListener("click", handleClick);
-        };
-    }, []);
+    document.addEventListener("click", handleClick);
 
-    const handleLogout = async () => {
-        try {
-            await fetch("/api/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-
-            localStorage.removeItem("user");
-
-            setUser(null);
-            setAccount(false);
-
-            router.push("/");
-        } catch (error) {
-            console.error("Logout failed", error);
-        }
+    return () => {
+      document.removeEventListener("click", handleClick);
     };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      localStorage.removeItem("user");
+
+      setUser(null);
+      setAccount(false);
+
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   const goToDashboard = () => {
-    if (session?.user?.role === "seller") {
+    if (user?.role === "seller") {
       router.push("/seller/dashboard");
     } else {
       router.push("/user/dashboard");
     }
   };
-
-    return (
-        <div className='relative'>     
-            <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" viewBox="0 0 24 24" 
-                strokeWidth="1.5" stroke="currentColor" 
-                aria-hidden="true" data-slot="icon" 
-                className="h-6 w-6 cursor-pointer text-text sm:hidden text-white"
-                onClick={() => setAccount(a => !a)}>
-                    <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z">
-                    </path>
-            </svg>
 
   return (
     <div className="relative">
@@ -75,9 +60,7 @@ const Account = () => {
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        aria-hidden="true"
-        data-slot="icon"
-        className="h-6 w-6 cursor-pointer text-text sm:hidden"
+        className="h-6 w-6 cursor-pointer text-white sm:hidden"
         onClick={(e) => {
           e.stopPropagation();
           setAccount((a) => !a);
@@ -97,7 +80,6 @@ const Account = () => {
         } transition-all duration-300`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/*Use Ternary to toggle auth buttons*/}
         {isLoggedIn ? (
           <>
             <button
@@ -116,7 +98,6 @@ const Account = () => {
               max-sm:active:bg-gray-300 max-sm:rounded-sm max-sm:w-full max-sm:px-6"
               onClick={async () => {
                 await handleLogout();
-                setAccount(false);
               }}
             >
               Logout

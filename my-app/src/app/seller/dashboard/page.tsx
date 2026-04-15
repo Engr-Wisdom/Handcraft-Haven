@@ -29,7 +29,7 @@ if (!user || user.role !== "seller") {
 }
 
 //Get the seller's store using owner_id
-const featuredStore = await getStoreByOwnerId(user.id);
+const featuredStore = await getStoreByOwnerId(Number(user.id));
 
 //Get only the products that belong to this seller's store
 const products = featuredStore
