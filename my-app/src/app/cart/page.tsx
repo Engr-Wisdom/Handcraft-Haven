@@ -101,3 +101,5 @@ export default function Carts() {
     </div>
   )
 }
+
+// Cart Page
