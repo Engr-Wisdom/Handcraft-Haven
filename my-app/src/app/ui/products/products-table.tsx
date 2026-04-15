@@ -12,7 +12,7 @@ export default async function ProductTable({ products, title }: { products: Arra
             </div>
             {products.length > 0 ? <ul className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 rounded-10 overflow-hidden py-2'>
                 {products.map((product: Product, index: number) => (
-                    <ProductCard product={product} key={product.id} />
+                    <ProductCard product={product} key={index} />
                 ))}
             </ul> : <div><p className="text-4xl text-center font-bold">No products listed yet</p> <p className="text-center text-2xl mt-2">Check back soon!</p> </div>}
         </div>)
