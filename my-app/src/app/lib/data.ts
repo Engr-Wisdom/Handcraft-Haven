@@ -2,7 +2,7 @@
 import { promises as fs } from 'fs';
 import { products } from '@/data/cards';
 import postgres from 'postgres';
-import { Product, Store, Review, User, Category } from './definitions';
+import { Product, Store, Review, Category, User } from './definitions';
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 import { siteConfig } from '../constants/site';
 import { off } from 'process';
@@ -106,6 +106,19 @@ export async function getProductsByCategory(category: string, currentPage: numbe
 }
 
 
+export async function getUserByID(id: number) {
+    // await new Promise((resolve) => setTimeout(resolve, 10000));
+    try {
+        const data = await sql<User[]>`SELECT id,first_name,last_name,email, role  FROM users
+         WHERE id = ${id}
+        `;
+        const user = data[0];
+        return user;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch c. ${id} USER`);
+    }
+}
 export async function getProduct(id: number) {
     try {
         const data = await sql<Product[]>`${BASE_PRODUCT_SQL}
@@ -298,7 +311,6 @@ export async function getLastWrittenReviewByStore(store: Store, limit: number = 
     }
 
 }
-
 export async function getLastReviewsByProduct(product: Product, limit: number = 3) {
     // await new Promise((resolve) => setTimeout(resolve, 3000));
     try {
@@ -314,34 +326,6 @@ export async function getLastReviewsByProduct(product: Product, limit: number = 
     }
 
 }
-
-export async function getUserByID(id: number) {
-    // await new Promise((resolve) => setTimeout(resolve, 10000));
-    try {
-        const data = await sql<User[]>`SELECT id,first_name,last_name,email, role  FROM users
-         WHERE id = ${id}
-        `;
-        const user = data[0];
-        return user;
-    } catch (err) {
-        console.error('Database Error:', err);
-        throw new Error(`Failed to fetch c. ${id} USER`);
-    }
-}
-
-export async function isProductReviewedByUser(user_id: number, product_id: number) {
-    try {
-        const categories = await sql`
-        SELECT COUNT(*) AS n FROM ratings
-        WHERE user_id = ${user_id} AND product_id = ${product_id}
-        `;
-        return categories[0].n != 0;
-    } catch (err) {
-        console.error('Database Error:', err);
-        throw new Error(`Failed to Insert REVIEW`);
-    }
-}
-
 export async function getCategories() {
     // await new Promise((resolve) => setTimeout(resolve, 3000));
     try {
@@ -354,6 +338,36 @@ export async function getCategories() {
     }
 
 }
+
+export async function getUserById(userId: number) {
+    try {
+        const users = await sql<User[]>`
+        SELECT *
+        FROM users
+        WHERE id = ${userId}
+        LIMIT 1
+        `;
+        return users[0];
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error('Failed to fetch user by id');
+    }
+}
+
+export async function getStoreByOwnerId(ownerId: number) {
+    try {
+        const stores = await sql<Store[]>`${STORE_BASE_QUERY}
+        WHERE s.owner_id = ${ownerId}
+        GROUP BY s.id
+        LIMIT 1
+        `;
+        return stores[0];
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error('Failed to fetch store by owner id');
+    }
+}
+
 export async function insertReview(
     rating: number,
     product_id: number,
@@ -366,6 +380,19 @@ export async function insertReview(
         VALUES (${rating}, ${product_id}, ${user_id}, ${message})
         `;
         return review;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to Insert REVIEW`);
+    }
+}
+
+export async function isProductReviewedByUser(user_id: number, product_id: number) {
+    try {
+        const categories = await sql`
+        SELECT COUNT(*) AS n FROM ratings
+        WHERE user_id = ${user_id} AND product_id = ${product_id}
+        `;
+        return categories[0].n != 0;
     } catch (err) {
         console.error('Database Error:', err);
         throw new Error(`Failed to Insert REVIEW`);

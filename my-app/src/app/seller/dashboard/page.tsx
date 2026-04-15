@@ -1,18 +1,42 @@
-import { getStoreByUser, getUserByID } from "@/app/lib/data";
-import getSessionLocal, { validateLogin } from "@/app/lib/local-auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import {
+  getUserById,
+  getStoreByOwnerId,
+  getProductsByStore,
+} from "@/app/lib/data";
+import StoreCard from "@/app/ui/stores/store-card";
+import ProductCard from "@/app/ui/products/product-card";
+import { formatFloat } from "@/app/lib/utils";
 
-export default async function Page() {
+//Exporting and reusing get Stores and products
+export default async function SellerDashboardPage() {
+  //Get the current logged-in session
+const session = await auth();
 
+//If there is no session or no user id, redirect to login
+if (!session?.user?.id) {
+  redirect("/login");
+}
 
-  const user = await validateLogin();
-  const isSeller = user.role == "seller";
-  if (!isSeller) {
-    redirect("/");
-  }
-  const store = await getStoreByUser(user);
+//Get the full user information from the database
+const user = await getUserById(Number(session.user.id));
 
+//Protect this page so only sellers can access it
+if (!user || user.role !== "seller") {
+  redirect("/");
+}
 
+//Get the seller's store using owner_id
+const featuredStore = await getStoreByOwnerId(Number(user.id));
+
+//Get only the products that belong to this seller's store
+const products = featuredStore
+  ? await getProductsByStore(1, featuredStore) // aligned with your data.ts
+  : [];
+
+const recentProducts = products.slice(0, 4);
 
 //Get the seller's store using owner_id
 const featuredStore = await getStoreByOwnerId(Number(user.id));

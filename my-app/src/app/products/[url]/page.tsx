@@ -5,7 +5,6 @@ import ProductView from "@/app/ui/products/product-view";
 import { Product, Review, User } from "@/app/lib/definitions";
 
 import { Metadata } from "next";
-import getSessionLocal from "@/app/lib/local-auth";
 type Props = {
     params: Promise<{ url: string }>
 }
@@ -29,7 +28,7 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
     let product: Product | undefined;
     let user: User | undefined;
     let reviews: Array<Review> | undefined;
-    let user_id = await getSessionLocal();
+    let user_id = 3;
     let isReviewed: boolean;
     let name = "";
     if (user_id != 0) {
@@ -43,10 +42,9 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
             getProductByUrl(url),
 
 
-        ]);
-    }
+    ]);
 
-
+    const name = `${user.first_name} ${user.last_name}`;
 
 
 
@@ -54,6 +52,7 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
         notFound();
     }
     isReviewed = await isProductReviewedByUser(user_id, Number(product.id));
+    console.log("Reviewed: " + isReviewed)
     const url_product = '/products/' + url;
     reviews = await getLastReviewsByProduct(product)
     return <>

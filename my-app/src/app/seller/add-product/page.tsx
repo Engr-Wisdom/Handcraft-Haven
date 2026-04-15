@@ -4,11 +4,50 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+// Validation helper functions
+const validateForm = (data: any) => {
+  const errors: any = {};
+
+  // Name validation
+  if (!data.name.trim()) {
+    errors.name = "Product name is required";
+  } else if (data.name.length < 3) {
+    errors.name = "Product name must be at least 3 characters";
+  }
+
+  // Price validation
+  if (!data.price) {
+    errors.price = "Price is required";
+  } else if (Number(data.price) <= 0) {
+    errors.price = "Price must be greater than 0";
+  }
+
+  // Category validation
+  if (!data.category_id) {
+    errors.category_id = "Please select a category";
+  }
+
+  // Description validation (NEW)
+  if (!data.description.trim()) {
+    errors.description = "Product description is required";
+  } else if (data.description.length < 10) {
+    errors.description = "Description must be at least 10 characters";
+  } else if (data.description.length > 2000) {
+    errors.description = "Description must be less than 2000 characters";
+  }
+
+  return errors;
+};
+
 const Page = () => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  
+  // Add validation state
+  const [errors, setErrors] = useState<any>({});
+  const [touched, setTouched] = useState<any>({});
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,7 +55,6 @@ const Page = () => {
     price: "",
     image: "",
     category_id: "",
-    is_popular: false,
   });
 
   useEffect(() => {
@@ -36,6 +74,12 @@ const Page = () => {
     fetchCategories();
   }, []);
 
+  // Real-time validation
+  useEffect(() => {
+    const validationErrors = validateForm(formData);
+    setErrors(validationErrors);
+  }, [formData]);
+
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
 
@@ -43,10 +87,40 @@ const Page = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    // Mark field as touched
+    setTouched((prev: any) => ({
+      ...prev,
+      [name]: true,
+    }));
+  };
+
+  const handleBlur = (e: any) => {
+    const { name } = e.target;
+    setTouched((prev: any) => ({
+      ...prev,
+      [name]: true,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Mark all fields as touched
+    const allTouched = Object.keys(formData).reduce((acc: any, key) => {
+      acc[key] = true;
+      return acc;
+    }, {});
+    setTouched(allTouched);
+
+    // Validate
+    const validationErrors = validateForm(formData);
+    
+    if (Object.keys(validationErrors).length > 0) {
+      const firstError = Object.values(validationErrors)[0];
+      toast.error(firstError as string);
+      return;
+    }
 
     if (!formData.price || !formData.category_id) {
       toast.error("Price and Category are required");
@@ -59,7 +133,6 @@ const Page = () => {
       price: Number(formData.price),
       image: formData.image,
       category_id: Number(formData.category_id),
-      is_popular: formData.is_popular,
     };
 
     setIsLoading(true);
@@ -98,8 +171,12 @@ const Page = () => {
         price: "",
         image: "",
         category_id: "",
-        is_popular: false,
       });
+      
+      // Reset validation
+      setErrors({});
+      setTouched({});
+      
     } catch (error) {
       toast.error("Server error");
     } finally {
@@ -114,42 +191,81 @@ const Page = () => {
 
             <div className="mt-5">
                 <label htmlFor="name">Product Name</label>
-                <input name="name" value={formData.name} onChange={handleChange} 
-                className='border-2 rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' required />
+                <input 
+                  name="name" 
+                  value={formData.name} 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className='border-2 rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' 
+                  required 
+                />
+                {touched.name && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
             </div>
 
             <div className="mt-5">
                 <label htmlFor="price">Product Price</label>
-                <input name="price" type="number" value={formData.price} onChange={handleChange} required className='border-2 
-                rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' />
+                <input 
+                  name="price" 
+                  type="number" 
+                  value={formData.price} 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required 
+                  className='border-2 rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' 
+                />
+                {touched.price && errors.price && (
+                  <p className="text-red-500 text-xs mt-1">{errors.price}</p>
+                )}
             </div>
 
             <div className="mt-5">
                 <label htmlFor="image">Product Image</label>
-                <input name="image" value={formData.image} onChange={handleChange} className='border-2 rounded p-2
-                border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none'/>
+                <input 
+                  name="image" 
+                  value={formData.image} 
+                  onChange={handleChange}
+                  className='border-2 rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none'
+                />
             </div>
 
             <div className="mt-5">
                 <label htmlFor="category_id">Product Category</label>
-                <select name="category_id" value={formData.category_id} onChange={handleChange} className='border-2 
-                rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' required>
+                <select 
+                  name="category_id" 
+                  value={formData.category_id} 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className='border-2 rounded p-2 border-gray-400 mt-2 max-sm:text-sm flex items-center gap-2 w-full outline-none' 
+                  required
+                >
                   <option value="">Select Category</option>
                   {categories.map(category => (
                     <option value={category.id} key={category.id}>{category.name}</option>
                   ))}
                 </select>
+                {touched.category_id && errors.category_id && (
+                  <p className="text-red-500 text-xs mt-1">{errors.category_id}</p>
+                )}
             </div>
 
-            <label className="flex items-center gap-2 mt-5">
-                <input type="checkbox" name="is_popular" checked={formData.is_popular} onChange={handleChange} />
-                Mark as Popular
-            </label>
-
             <div className="mt-5">
-                <label htmlFor="description">Product Description</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} className="border-gray-400
-                border-2 rounded w-full h-30 outline-none resize-none p-2" />
+                <label htmlFor="description">Product Description <span className="text-red-500">*</span></label>
+                <textarea 
+                  name="description" 
+                  value={formData.description} 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className="border-gray-400 border-2 rounded w-full h-30 outline-none resize-none p-2" 
+                  required
+                />
+                {touched.description && errors.description && (
+                  <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                )}
+                {!errors.description && formData.description && touched.description && (
+                  <p className="text-green-500 text-xs mt-1">✓ Description looks good</p>
+                )}
             </div>
 
             <button type='submit' disabled={isLoading} className='bg-amber-700 text-white p-2 rounded mt-5 cursor-pointer 
@@ -171,4 +287,4 @@ const Page = () => {
   );
 }
 
-export default Page
+export default Page;
