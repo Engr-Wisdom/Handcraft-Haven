@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import Image from "next/image"
 import Card from "@/app/ui/card"
 import { ShopNow } from './ui/buttons'
 import ProductTable, { ProductHomeTable } from './ui/products/products-table'
-import { getPopularProducts } from './lib/data'
+import { getPopularProducts, getStores } from './lib/data'
+import { StoresViewHome } from './ui/stores/stores-view'
 
 
 export default async function Home() {
-  const products = await getPopularProducts();
+
   return (
     <div className='bg-gray-200 text-black p-4 sm:p-10'>
       <div className='flex items-center justify-between gap-20 max-md:flex-col max-lg:gap-10 mb-20'>
@@ -24,8 +25,13 @@ export default async function Home() {
           max-sm:h-full rounded-2xl ' />
         </div>
       </div>
+      <Suspense >
+        <ProductHomeTable />
+      </Suspense>
 
-      <ProductHomeTable products={products} title='Most Popular' filter={false}  />
+      <Suspense >
+        <StoresViewHome />
+      </Suspense>
     </div>
   )
 }
