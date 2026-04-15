@@ -31,7 +31,6 @@ export default async function Page(props: { params: Promise<{ url: string }> }) 
     let reviews: Array<Review> | undefined;
     let user_id = await getSessionLocal();
     let isReviewed: boolean;
-    console.log("User: " + user_id)
     let name = "";
     if (user_id != 0) {
         [product, user] = await Promise.all([

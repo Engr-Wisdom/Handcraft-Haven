@@ -215,6 +215,33 @@ export async function getProductsByStore(currentPage: number, store: Store) {
         throw new Error(`Failed to fetch all products`);
     }
 }
+export async function getPopularProducts() {
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    try {
+        const data = await sql`SELECT p.id, p.seo_url,  COUNT(rating) AS rating_n, COALESCE(AVG(rating), 0) AS rating  FROM ratings AS r
+RIGHT JOIN products as p
+ON p.id = r.product_id
+GROUP BY p.id, r.product_id
+ORDER BY 
+	rating_n DESC
+	LIMIT 4
+        `;
+
+        let productsPromises = data.map(async (p) => {
+            const product = getProductByUrl(p.seo_url);
+            return product;
+        });
+
+        let products = await Promise.all(productsPromises);
+
+        return products;
+    } catch (err) {
+        console.error('Database Error:', err);
+        throw new Error(`Failed to fetch all products`);
+    }
+}
 export async function getStores(currentPage: number) {
 
     // await new Promise((resolve) => setTimeout(resolve, 3000));
