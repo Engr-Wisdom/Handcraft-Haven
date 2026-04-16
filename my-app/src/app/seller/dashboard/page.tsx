@@ -48,7 +48,7 @@ export default async function Page() {
               Change <span className="font-bold text-blue-700">{store.name}</span> information.
             </p>
           </a> : <a
-            href="/seller/add-store"
+            href="/seller/create-store"
             className="border rounded-lg p-5 shadow-sm hover:shadow-md transition bg-white"
           >
             <h2 className="text-xl font-semibold mb-2">Create Store</h2>
